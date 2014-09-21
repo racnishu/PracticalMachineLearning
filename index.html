@@ -31,37 +31,330 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <p>&lt;!DOCTYPE html&gt;</p>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p></p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<p></p>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p></p>
 
+<p></p>
+
+<p></p>PracticalMachineLearning<p></p>
+
+code{white-space: pre;}<p></p>
+
+
+  pre:not([class]) {
+    background-color: white;
+  }
+<p></p>
+
+<p></p>
+
+
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+<div>
+
+
+<div>
+<h1>
+<a name="practicalmachinelearning" class="anchor" href="#practicalmachinelearning"><span class="octicon octicon-link"></span></a>PracticalMachineLearning</h1>
+<h4>
+<a name="rachit" class="anchor" href="#rachit"><span class="octicon octicon-link"></span></a><em>Rachit</em>
+</h4>
+<h4>
+<a name="sunday-september-21-2014" class="anchor" href="#sunday-september-21-2014"><span class="octicon octicon-link"></span></a><em>Sunday, September 21, 2014</em>
+</h4>
+</div>
+
+<div>
+<h2>
+<a name="practical-machine-learning-prediction-assignment" class="anchor" href="#practical-machine-learning-prediction-assignment"><span class="octicon octicon-link"></span></a>Practical Machine Learning/ Prediction Assignment</h2>
+<div>
 <h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<a name="background" class="anchor" href="#background"><span class="octicon octicon-link"></span></a>Background</h3>
+<p>Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement Â- a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks.</p>
+<p>One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this data set, the participants were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: <a href="http://groupware.les.inf.puc-rio.br/har">http://groupware.les.inf.puc-rio.br/har</a> (see the section on the Weight Lifting Exercise Dataset).</p>
+<p>In this project, the goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants toto predict the manner in which praticipants did the exercise.</p>
+<p>The dependent variable or response is the “classe” variable in the training set.</p>
+</div>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
+<div>
 <h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<a name="data" class="anchor" href="#data"><span class="octicon octicon-link"></span></a>Data</h3>
+<p>Download and load the data from the web and then load it to R.</p>
+<pre><code>#download.file("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", destfile = "./pml-training.csv")
+#download.file("http://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", destfile = "./pml-testing.csv")
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+trainingOrg = read.csv("pml-training.csv", na.strings=c("", "NA", "NULL"))
+# data.train =  read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", na.strings=c("", "NA", "NULL"))
 
+testingOrg = read.csv("pml-testing.csv", na.strings=c("", "NA", "NULL"))
+dim(trainingOrg)</code></pre>
+<pre><code>## [1] 19622   160</code></pre>
+<pre><code>dim(testingOrg)</code></pre>
+<pre><code>## [1]  20 160</code></pre>
+</div>
+
+<div>
 <h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<a name="pre-screening-the-data" class="anchor" href="#pre-screening-the-data"><span class="octicon octicon-link"></span></a>Pre-screening the data</h3>
+<p>There are several approaches for reducing the number of predictors.</p>
+<ul>
+<li>Remove variables that we believe have too many NA values.</li>
+</ul>
+<pre><code> training.dena &lt;- trainingOrg[ , colSums(is.na(trainingOrg)) == 0]
+#head(training1)
+#training3 &lt;- training.decor[ rowSums(is.na(training.decor)) == 0, ]
+dim(training.dena)</code></pre>
+<pre><code>## [1] 19622    60</code></pre>
+<ul>
+<li>Remove unrelevant variables There are some unrelevant variables that can be removed as they are unlikely to be related to dependent variable.</li>
+</ul>
+<pre><code>remove = c('X', 'user_name', 'raw_timestamp_part_1', 'raw_timestamp_part_2', 'cvtd_timestamp', 'new_window', 'num_window')
+training.dere &lt;- training.dena[, -which(names(training.dena) %in% remove)]
+dim(training.dere)</code></pre>
+<pre><code>## [1] 19622    53</code></pre>
+<ul>
+<li>Check the variables that have extremely low variance (this method is useful nearZeroVar() )</li>
+</ul>
+<pre><code>library(caret)</code></pre>
+<pre><code>## Warning: package 'caret' was built under R version 3.1.1</code></pre>
+<pre><code>## Loading required package: lattice
+## Loading required package: ggplot2</code></pre>
+<pre><code>## Warning: package 'ggplot2' was built under R version 3.1.1</code></pre>
+<pre><code># only numeric variabls can be evaluated in this way.
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+zeroVar= nearZeroVar(training.dere[sapply(training.dere, is.numeric)], saveMetrics = TRUE)
+training.nonzerovar = training.dere[,zeroVar[, 'nzv']==0]
+dim(training.nonzerovar)</code></pre>
+<pre><code>## [1] 19622    53</code></pre>
+<ul>
+<li>Remove highly correlated variables 90% (using for example findCorrelation() )</li>
+</ul>
+<pre><code># only numeric variabls can be evaluated in this way.
+corrMatrix &lt;- cor(na.omit(training.nonzerovar[sapply(training.nonzerovar, is.numeric)]))
+dim(corrMatrix)</code></pre>
+<pre><code>## [1] 52 52</code></pre>
+<pre><code># there are 52 variables.
+corrDF &lt;- expand.grid(row = 1:52, col = 1:52)
+corrDF$correlation &lt;- as.vector(corrMatrix)
+levelplot(correlation ~ row+ col, corrDF)</code></pre>
+<p><img title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="480"></p>
+<p>We are going to remove those variable which have high correlation.</p>
+<pre><code>removecor = findCorrelation(corrMatrix, cutoff = .90, verbose = FALSE)</code></pre>
+<pre><code>training.decor = training.nonzerovar[,-removecor]
+dim(training.decor)</code></pre>
+<pre><code>## [1] 19622    46</code></pre>
+<p>We get 19622 samples and 46 variables.</p>
+</div>
 
+<div>
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a name="split-data-to-training-and-testing-for-cross-validation" class="anchor" href="#split-data-to-training-and-testing-for-cross-validation"><span class="octicon octicon-link"></span></a>Split data to training and testing for cross validation.</h3>
+<pre><code>inTrain &lt;- createDataPartition(y=training.decor$classe, p=0.7, list=FALSE)
+training &lt;- training.decor[inTrain,]; testing &lt;- training.decor[-inTrain,]
+dim(training);dim(testing)</code></pre>
+<pre><code>## [1] 13737    46</code></pre>
+<pre><code>## [1] 5885   46</code></pre>
+<p>We got 13737 samples and 46 variables for training, 5885 samples and 46 variables for testing.</p>
+</div>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p></p>
+</div>
+
+<div>
+<h2>
+<a name="analysis" class="anchor" href="#analysis"><span class="octicon octicon-link"></span></a>Analysis</h2>
+<div>
+<h3>
+<a name="regression-tree" class="anchor" href="#regression-tree"><span class="octicon octicon-link"></span></a>Regression Tree</h3>
+<p>Now we fit a tree to these data, and summarize and plot it. First, we use the ‘tree’ package. It is much faster than ‘caret’ package.</p>
+<pre><code>library(tree)</code></pre>
+<pre><code>## Warning: package 'tree' was built under R version 3.1.1</code></pre>
+<pre><code>set.seed(12345)
+tree.training=tree(classe~.,data=training)
+summary(tree.training)</code></pre>
+<pre><code>## 
+## Classification tree:
+## tree(formula = classe ~ ., data = training)
+## Variables actually used in tree construction:
+##  [1] "pitch_forearm"     "magnet_belt_y"     "accel_forearm_z"  
+##  [4] "magnet_dumbbell_y" "roll_forearm"      "magnet_dumbbell_z"
+##  [7] "pitch_belt"        "yaw_belt"          "accel_forearm_x"  
+## [10] "yaw_dumbbell"      "magnet_forearm_y"  "accel_dumbbell_z" 
+## [13] "gyros_belt_z"     
+## Number of terminal nodes:  19 
+## Residual mean deviance:  1.71 = 23400 / 13700 
+## Misclassification error rate: 0.34 = 4667 / 13737</code></pre>
+<pre><code>plot(tree.training)
+text(tree.training,pretty=0, cex =.8)</code></pre>
+<p><img title="plot of chunk unnamed-chunk-12" alt="plot of chunk unnamed-chunk-12" width="768"></p>
+<p>This is a bushy tree, and we are going to prune it.</p>
+<p>For a detailed summary of the tree, print it:</p>
+<pre><code>#tree.training</code></pre>
+</div>
+
+<p></p>
+</div>
+
+<div>
+<h2>
+<a name="rpart-form-caret-very-slow" class="anchor" href="#rpart-form-caret-very-slow"><span class="octicon octicon-link"></span></a>Rpart form Caret, very slow.</h2>
+<pre><code>library(caret)
+modFit &lt;- train(classe ~ .,method="rpart",data=training)</code></pre>
+<pre><code>## Loading required package: rpart</code></pre>
+<pre><code>## Warning: package 'rpart' was built under R version 3.1.1</code></pre>
+<pre><code>print(modFit$finalModel)</code></pre>
+<pre><code>## n= 13737 
+## 
+## node), split, n, loss, yval, (yprob)
+##       * denotes terminal node
+## 
+##  1) root 13737 9831 A (0.28 0.19 0.17 0.16 0.18)  
+##    2) pitch_forearm&lt; -33.15 1134   15 A (0.99 0.013 0 0 0) *
+##    3) pitch_forearm&gt;=-33.15 12603 9816 A (0.22 0.21 0.19 0.18 0.2)  
+##      6) magnet_belt_y&gt;=555.5 11571 8787 A (0.24 0.23 0.21 0.18 0.15)  
+##       12) magnet_dumbbell_y&lt; 424.5 9475 6780 A (0.28 0.18 0.24 0.17 0.12)  
+##         24) roll_forearm&lt; 121.5 5914 3487 A (0.41 0.17 0.18 0.15 0.086) *
+##         25) roll_forearm&gt;=121.5 3561 2351 C (0.075 0.18 0.34 0.22 0.19)  
+##           50) accel_forearm_x&gt;=-107.5 2532 1566 C (0.085 0.22 0.38 0.087 0.22) *
+##           51) accel_forearm_x&lt; -107.5 1029  479 D (0.051 0.084 0.24 0.53 0.094) *
+##       13) magnet_dumbbell_y&gt;=424.5 2096 1125 B (0.042 0.46 0.046 0.2 0.24) *
+##      7) magnet_belt_y&lt; 555.5 1032  193 E (0.0029 0.0029 0.0019 0.18 0.81) *</code></pre>
+<div>
+<h3>
+<a name="prettier-plots" class="anchor" href="#prettier-plots"><span class="octicon octicon-link"></span></a>Prettier plots</h3>
+<pre><code>library(rattle)</code></pre>
+<pre><code>## Warning: package 'rattle' was built under R version 3.1.1</code></pre>
+<pre><code>## Rattle: A free graphical interface for data mining with R.
+## Version 3.3.0 Copyright (c) 2006-2014 Togaware Pty Ltd.
+## Type 'rattle()' to shake, rattle, and roll your data.</code></pre>
+<pre><code>fancyRpartPlot(modFit$finalModel)</code></pre>
+<p><img title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="768"></p>
+<p>The result from ‘caret’ ‘rpart’ package is close to ‘tree’ package.</p>
+</div>
+
+<div>
+<h3>
+<a name="cross-validation" class="anchor" href="#cross-validation"><span class="octicon octicon-link"></span></a>Cross Validation</h3>
+<p>We are going to check the performance of the tree on the testing data by cross validation.</p>
+<pre><code>tree.pred=predict(tree.training,testing,type="class")
+predMatrix = with(testing,table(tree.pred,classe))
+sum(diag(predMatrix))/sum(as.vector(predMatrix)) # error rate</code></pre>
+<pre><code>## [1] 0.6561</code></pre>
+<p>The 0.70 is not very accurate.</p>
+<pre><code>tree.pred=predict(modFit,testing)
+predMatrix = with(testing,table(tree.pred,classe))
+sum(diag(predMatrix))/sum(as.vector(predMatrix)) # error rate</code></pre>
+<pre><code>## [1] 0.489</code></pre>
+<p>The 0.50 from ‘caret’ package is much lower than the result from ‘tree’ package.</p>
+</div>
+
+<div>
+<h3>
+<a name="pruning-tree" class="anchor" href="#pruning-tree"><span class="octicon octicon-link"></span></a>Pruning tree</h3>
+<p>This tree was grown to full depth, and might be too variable. We now use Cross Validation to prune it.</p>
+<pre><code>cv.training=cv.tree(tree.training,FUN=prune.misclass)
+cv.training</code></pre>
+<pre><code>## $size
+## [1] 19 18 15 14 13 10  7  5  1
+## 
+## $dev
+## [1] 4765 4811 5428 5442 5574 6562 6705 7218 9831
+## 
+## $k
+## [1]  -Inf  49.0 145.3 147.0 162.0 195.3 211.7 262.0 656.2
+## 
+## $method
+## [1] "misclass"
+## 
+## attr(,"class")
+## [1] "prune"         "tree.sequence"</code></pre>
+<p>It shows that when the size of the tree goes down, the deviance goes up. It means the 21 is a good size (i.e. number of terminal nodes) for this tree. We do not need to prune it.</p>
+<p>Suppose we prune it at size of nodes at 18.</p>
+<pre><code>prune.training=prune.misclass(tree.training,best=18)
+#plot(prune.training);text(prune.training,pretty=0,cex =.8 )</code></pre>
+<p>Now lets evaluate this pruned tree on the test data.</p>
+<pre><code>tree.pred=predict(prune.training,testing,type="class")
+predMatrix = with(testing,table(tree.pred,classe))
+sum(diag(predMatrix))/sum(as.vector(predMatrix)) # error rate</code></pre>
+<pre><code>## [1] 0.6525</code></pre>
+<p>0.66 is a little less than 0.70, so pruning did not hurt us with repect to misclassification errors, and gave us a simpler tree. We use less predictors to get almost the same result. By pruning, we got a shallower tree, which is easier to interpret.</p>
+<p>The single tree is not good enough, so we are going to use bootstrap to improve the accuracy. We are going to try random forests.</p>
+<p>Random Forests ``````````````</p>
+<p>These methods use trees as building blocks to build more complex models.</p>
+<p>Random forests build lots of bushy trees, and then average them to reduce the variance.</p>
+<pre><code>require(randomForest)</code></pre>
+<pre><code>## Loading required package: randomForest</code></pre>
+<pre><code>## Warning: package 'randomForest' was built under R version 3.1.1</code></pre>
+<pre><code>## randomForest 4.6-10
+## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre><code>set.seed(12345)</code></pre>
+<p>Lets fit a random forest and see how well it performs.</p>
+<pre><code>rf.training=randomForest(classe~.,data=training,ntree=100, importance=TRUE)
+rf.training</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(formula = classe ~ ., data = training, ntree = 100,      importance = TRUE) 
+##                Type of random forest: classification
+##                      Number of trees: 100
+## No. of variables tried at each split: 6
+## 
+##         OOB estimate of  error rate: 0.65%
+## Confusion matrix:
+##      A    B    C    D    E class.error
+## A 3897    5    1    0    3    0.002304
+## B   17 2635    6    0    0    0.008653
+## C    0   16 2376    4    0    0.008347
+## D    0    0   23 2227    2    0.011101
+## E    0    0    4    8 2513    0.004752</code></pre>
+<pre><code>#plot(rf.training, log="y")
+varImpPlot(rf.training,)</code></pre>
+<p><img title="plot of chunk unnamed-chunk-25" alt="plot of chunk unnamed-chunk-25" width="672"></p>
+<pre><code>plot(cv.training)</code></pre>
+<p><img title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="480"></p>
+</div>
+
+<div>
+<h3>
+<a name="out-of-sample-accuracy" class="anchor" href="#out-of-sample-accuracy"><span class="octicon octicon-link"></span></a>Out-of Sample Accuracy</h3>
+<p>Our Random Forest model shows OOB estimate of error rate: 0.72% for the training data. Now we will predict it for out-of sample accuracy.</p>
+<p>Now lets evaluate this tree on the test data.</p>
+<pre><code>tree.pred=predict(rf.training,testing,type="class")
+predMatrix = with(testing,table(tree.pred,classe))
+sum(diag(predMatrix))/sum(as.vector(predMatrix)) # error rate</code></pre>
+<pre><code>## [1] 0.9946</code></pre>
+<p>0.99 means we got a very accurate estimate.</p>
+<p>No. of variables tried at each split: 6. It means every time we only randomly use 6 predictors to grow the tree. Since p = 43, we can have it from 1 to 43, but it seems 6 is enough to get the good result.</p>
+</div>
+
+<div>
+<h3>
+<a name="conclusion" class="anchor" href="#conclusion"><span class="octicon octicon-link"></span></a>Conclusion</h3>
+<p>Now we can predict the testing data from the website.</p>
+<pre><code>answers &lt;- predict(rf.training, testingOrg)
+answers</code></pre>
+<pre><code>##  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+##  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+## Levels: A B C D E</code></pre>
+<p>These answers were submitted for grading and all the answers are right, it shows that this random forest model did a good job.</p>
+</div>
+
+<p></p>
+</div>
+
+<p></p>
+</div>
+
+<p>
+</p>
       </section>
     </div>
 
